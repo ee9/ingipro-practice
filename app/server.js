@@ -3,21 +3,19 @@ const randomColor = require('randomcolor');
 const http = require('http');
 const soketIO = require('socket.io');
 const shortid = require('shortid');
+const serveStatic = require('serve-static');
 
 const app = express();
 const server = http.createServer(app);
 const io = soketIO(server);
 
-const PORT = 3002;
+const PORT = 3000;
 const allConferences = {};
 
+app.use('/', serveStatic(__dirname + 'build'));
 
 server.listen(PORT, () => {
     console.log(`server listen ${PORT}`);
-});
-
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/startStateOnServ.html');
 });
 
 io.sockets.on('connection', (socket) => {
@@ -153,7 +151,7 @@ io.sockets.on('connection', (socket) => {
                 payload: allConferences[`${user.confName}`].state
               };
               socket.to(socket.confName).emit('main', stateChange);
-          } 
+          }
           break;
 
         case 'alert':
